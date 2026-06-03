@@ -1,0 +1,13 @@
+---
+- name: Gather facts
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Show hostname
+      debug:
+        var: ansible_hostname
+
+    - name: Show OS
+      debug:
+        var: ansible_distribution
