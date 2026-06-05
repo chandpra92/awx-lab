@@ -1,30 +1,38 @@
 ---
-- name: VM Health Check
+
+
+* name: Enterprise VM Monitoring
   hosts: all
   become: yes
 
   tasks:
 
-    - name: Check Uptime
-      command: uptime
-      register: uptime_output
+  * name: CPU Usage
+    shell: top -bn1 | grep "Cpu(s)"
+    register: cpu
 
-    - name: Show Uptime
-      debug:
-        var: uptime_output.stdout
+  * name: Memory Usage
+    shell: free -h
+    register: memory
 
-    - name: Check Memory
-      shell: free -h
-      register: memory_output
+  * name: Disk Usage
+    shell: df -h
+    register: disk
 
-    - name: Show Memory
-      debug:
-        var: memory_output.stdout_lines
+  * name: Uptime
+    shell: uptime
+    register: uptime
 
-    - name: Check Disk
-      shell: df -h
-      register: disk_output
+  * name: Running Services
+    shell: systemctl list-units --type=service --state=running
+    register: services
 
-    - name: Show Disk
-      debug:
-        var: disk_output.stdout_lines
+  * name: Report
+    debug:
+    msg:
+    - "{{ inventory_hostname }}"
+    - "{{ cpu.stdout }}"
+    - "{{ memory.stdout }}"
+    - "{{ disk.stdout }}"
+    - "{{ uptime.stdout }}"
+
