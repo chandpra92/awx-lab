@@ -38,4 +38,3 @@
     - "Uptime:"
     - "{{ uptime.stdout }}"
 
-
