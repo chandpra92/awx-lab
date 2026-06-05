@@ -1,43 +1,42 @@
 ---
 
-* name: Enterprise VM Monitoring
+- name: Enterprise VM Monitoring
   hosts: all
   become: yes
 
   tasks:
 
-  * name: Gather Facts
+  - name: Gather Facts
     setup:
 
-  * name: Memory Usage Percentage
+  - name: Memory Usage Percentage
     shell: free | grep Mem | awk '{print ($3/$2)*100}'
     register: memory_percent
 
-  * name: Disk Usage Percentage
+  - name: Disk Usage Percentage
     shell: df / | tail -1 | awk '{print $5}' | sed 's/%//'
     register: disk_percent
 
-  * name: CPU Load
+  - name: CPU Load
     shell: uptime | awk -F'load average:' '{print $2}'
     register: cpu_load
 
-  * name: Memory Alert
+  - name: Memory Alert
     fail:
-    msg: "Memory usage exceeded 80%"
+     msg: "Memory usage exceeded 80%"
     when: memory_percent.stdout | float > 80
 
-  * name: Disk Alert
+  - name: Disk Alert
     fail:
-    msg: "Disk usage exceeded 80%"
+     msg: "Disk usage exceeded 80%"
     when: disk_percent.stdout | int > 80
 
-  * name: Display Report
+  - name: Display Report
     debug:
-    msg:
-    - "Server: {{ inventory_hostname }}"
-    - "Memory Usage: {{ memory_percent.stdout }}%"
-    - "Disk Usage: {{ disk_percent.stdout }}%"
-    - "CPU Load: {{ cpu_load.stdout }}"
-
+     msg:
+      - "Server: {{ inventory_hostname }}"
+      - "Memory Usage: {{ memory_percent.stdout }}%"
+      - "Disk Usage: {{ disk_percent.stdout }}%"
+      - "CPU Load: {{ cpu_load.stdout }}"
 
 
