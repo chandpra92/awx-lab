@@ -1,39 +1,43 @@
 ---
-- name: Enterprise VM Monitoring
+
+* name: Enterprise VM Monitoring
   hosts: all
   become: yes
 
   tasks:
 
-    - name: CPU Usage
-      shell: top -bn1 | grep "Cpu(s)"
-      register: cpu
+  * name: Gather Facts
+    setup:
 
-    - name: Memory Usage
-      shell: free -h
-      register: memory
+  * name: Memory Usage Percentage
+    shell: free | grep Mem | awk '{print ($3/$2)*100}'
+    register: memory_percent
 
-    - name: Disk Usage
-      shell: df -h
-      register: disk
+  * name: Disk Usage Percentage
+    shell: df / | tail -1 | awk '{print $5}' | sed 's/%//'
+    register: disk_percent
 
-    - name: Uptime
-      shell: uptime
-      register: uptime
+  * name: CPU Load
+    shell: uptime | awk -F'load average:' '{print $2}'
+    register: cpu_load
 
-    - name: Running Services
-      shell: systemctl list-units --type=service --state=running
-      register: services
+  * name: Memory Alert
+    fail:
+    msg: "Memory usage exceeded 80%"
+    when: memory_percent.stdout | float > 80
 
-    - name: Report
-      debug:
-        msg:
-          - "Host: {{ inventory_hostname }}"
-          - "CPU: {{ cpu.stdout }}"
-          - "Memory:"
-          - "{{ memory.stdout }}"
-          - "Disk:"
-          - "{{ disk.stdout }}"
-          - "Uptime:"
-          - "{{ uptime.stdout }}"
+  * name: Disk Alert
+    fail:
+    msg: "Disk usage exceeded 80%"
+    when: disk_percent.stdout | int > 80
+
+  * name: Display Report
+    debug:
+    msg:
+    - "Server: {{ inventory_hostname }}"
+    - "Memory Usage: {{ memory_percent.stdout }}%"
+    - "Disk Usage: {{ disk_percent.stdout }}%"
+    - "CPU Load: {{ cpu_load.stdout }}"
+
+
 
