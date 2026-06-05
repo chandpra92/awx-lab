@@ -1,0 +1,30 @@
+---
+- name: VM Health Check
+  hosts: all
+  become: yes
+
+  tasks:
+
+    - name: Check Uptime
+      command: uptime
+      register: uptime_output
+
+    - name: Show Uptime
+      debug:
+        var: uptime_output.stdout
+
+    - name: Check Memory
+      shell: free -h
+      register: memory_output
+
+    - name: Show Memory
+      debug:
+        var: memory_output.stdout_lines
+
+    - name: Check Disk
+      shell: df -h
+      register: disk_output
+
+    - name: Show Disk
+      debug:
+        var: disk_output.stdout_lines
