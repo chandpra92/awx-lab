@@ -1,6 +1,5 @@
 ---
 
-
 * name: Enterprise VM Monitoring
   hosts: all
   become: yes
@@ -30,9 +29,13 @@
   * name: Report
     debug:
     msg:
-    - "{{ inventory_hostname }}"
-    - "{{ cpu.stdout }}"
+    - "Host: {{ inventory_hostname }}"
+    - "CPU: {{ cpu.stdout }}"
+    - "Memory:"
     - "{{ memory.stdout }}"
+    - "Disk:"
     - "{{ disk.stdout }}"
+    - "Uptime:"
     - "{{ uptime.stdout }}"
+
 
