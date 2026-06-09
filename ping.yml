@@ -1,7 +1,14 @@
 ---
-- hosts: all
-  gather_facts: false
+
+* name: Test Connectivity
+  hosts: all
+  gather_facts: yes
 
   tasks:
-    - name: Test connection
-      ping:
+
+  * name: Ping remote server
+    ping:
+
+  * name: Show hostname
+    debug:
+    var: ansible_hostname
