@@ -1,0 +1,22 @@
+---
+
+- name: Customer-A Linux Patching
+  hosts: all
+  become: yes
+
+  tasks:
+
+  - name: Update apt cache
+    apt:
+    update_cache: yes
+
+  - name: Upgrade packages
+    apt:
+    upgrade: dist
+
+  - name: Reboot server
+    reboot:
+    reboot_timeout: 600
+
+  - name: Verify connectivity
+    ping:
